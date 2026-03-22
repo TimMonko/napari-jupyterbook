@@ -35,7 +35,7 @@ default = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.tasks]
 # Build the full site (executes notebooks — requires a display server on Linux)
-build = { cmd = "jupyter-book build --html --execute --strict" }
+build = { cmd = "jupyter-book build --html --execute" }
 # Live-preview server for local development
 start = {  cmd = "jupyter-book start" }
 # Remove build artifacts

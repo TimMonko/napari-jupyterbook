@@ -54,6 +54,7 @@ jobs:
         # ever-shrinking fraction of the display each time another notebook opens
         # or closes a viewer, causing the squished nbscreenshot output.
         run: |
+          herbstclient set_monitors 1280x960+0+0
           herbstclient rule title=napari floating=on
           herbstclient rule focus=on
       - name: Build workshop

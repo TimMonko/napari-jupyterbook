@@ -47,8 +47,18 @@ jobs:
         with:
           qt: true
           wm: herbstluftwm
+      - name: Configure herbstluftwm frame size
+        # napari windows float outside the tiling grid so their Qt-assigned size
+        # is preserved regardless of how many notebooks execute in parallel.
+        # Without floating=on, herbstluftwm re-tiles every napari window into an
+        # ever-shrinking fraction of the display each time another notebook opens
+        # or closes a viewer, causing the squished nbscreenshot output.
+        run: |
+          herbstclient set_monitors 1280x960+0+0
+          herbstclient rule title=napari floating=on
+          herbstclient rule focus=on
       - name: Build workshop
-        run: pixi run build-serial
+        run: pixi run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:

@@ -15,6 +15,17 @@ project:
         - file: notebooks/psobolewskiphd-interactive-analysis.md
         - file: notebooks/psobolewskiphd-spot-detection.md
         - file: notebooks/scipy-intro-bioimage-viz.md
+    - title: Screenshot Matrix
+      children:
+        - file: matrix/00_baseline.md
+        - file: matrix/01_sleep.md
+        - file: matrix/02_resize.md
+        - file: matrix/03_process_events.md
+        - file: matrix/04_canvas_only.md
+        - file: matrix/05_viewer_close.md
+        - file: matrix/06_multiple_viewers.md
+        - file: matrix/07_3d_mode.md
+        - file: matrix/08_combined.md
 site:
   options:
     folders: true

@@ -15,6 +15,7 @@ project:
         - file: notebooks/psobolewskiphd-interactive-analysis.md
         - file: notebooks/psobolewskiphd-spot-detection.md
         - file: notebooks/scipy-intro-bioimage-viz.md
+        - file: notebooks/files.md
     - title: Screenshot Matrix
       children:
         - file: matrix/00_baseline.md

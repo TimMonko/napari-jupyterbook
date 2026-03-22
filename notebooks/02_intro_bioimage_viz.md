@@ -109,8 +109,10 @@ from pathlib import Path
 
 # Path of execution is different depending on whether the notebook is run locally or via jupyter-book
 if (Path() / 'notebooks' / 'data').exists():
+    print("Running from root, loading data from notebooks/data/")
     data_dir = Path() / 'notebooks' / 'data'
 else:
+    print("Running from notebooks folder, loading data from data/")
     data_dir = Path().resolve() / 'data'
 
 # load the image data and inspect its shape

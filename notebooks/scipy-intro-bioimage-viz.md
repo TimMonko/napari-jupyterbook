@@ -107,7 +107,7 @@ Here we will explore the fourth option, explicitly loading a 3D image using the 
 from tifffile import imread
 
 # load the image data and inspect its shape
-nuclei = imread('data/nuclei.tif')
+nuclei = imread('notebooks/data/nuclei.tif')
 print(nuclei.shape)
 ```
 

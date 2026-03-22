@@ -40,5 +40,7 @@ build = { cmd = "jupyter-book build --html --execute" }
 build-serial = { cmd = "jupyter-book build --html --execute --execute-parallel 1" }
 # Live-preview server for local development
 start = { cmd = "jupyter-book start" }
+# Live-preview with serial execution (safer on CI or when debugging screenshot issues)
+start-noparallel = { cmd = "jupyter-book start --execute --execute-parallel 1" }
 # Remove build artifacts
 clean = "jupyter-book clean ."

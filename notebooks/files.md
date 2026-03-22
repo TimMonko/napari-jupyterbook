@@ -12,4 +12,6 @@ from pathlib import Path
 print("Path(): ", Path())
 print("Current working directory: ", Path().resolve())
 print("Contents of current directory: ", list(Path().iterdir()))
+print("Does notebooks/data exist? ", (Path() / 'notebooks' / 'data').exists())
+print("Does data exist? ", (Path() / 'data').exists())
 ```

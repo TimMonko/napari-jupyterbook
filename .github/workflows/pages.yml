@@ -47,18 +47,38 @@ jobs:
         with:
           qt: true
           wm: herbstluftwm
-      - name: Configure herbstluftwm frame size
-        # napari windows float outside the tiling grid so their Qt-assigned size
-        # is preserved regardless of how many notebooks execute in parallel.
-        # Without floating=on, herbstluftwm re-tiles every napari window into an
-        # ever-shrinking fraction of the display each time another notebook opens
-        # or closes a viewer, causing the squished nbscreenshot output.
+      - name: Configure herbstluftwm
+        # The only rule needed: float napari windows outside the tiling grid.
+        # Without this, herbstluftwm shrinks every tiled napari window each time
+        # another notebook opens or closes a viewer during parallel execution,
+        # causing squished nbscreenshot output.
+        # (focus=on is a separate rule that raises windows on creation — not needed
+        # for screenshots since nbscreenshot renders directly via Qt, not the WM.)
+        run: herbstclient rule title=napari floating=on
+      - name: Seed napari window geometry
+        # Opens napari once at 1280x720, saves QSettings, then exits. All subsequent
+        # napari.Viewer() instances launched by the notebooks will restore this
+        # geometry rather than starting at Qt's squarish default size.
+        # This is the closest equivalent to a conf.py for notebook window sizing.
+        env:
+          XDG_CONFIG_HOME: /tmp/napari-ci-config
         run: |
-          herbstclient set_monitors 1280x960+0+0
-          herbstclient rule title=napari floating=on
-          herbstclient rule focus=on
+          python - <<'EOF'
+          import napari
+          v = napari.Viewer(show=True)
+          v.window._qt_window.resize(1280, 720)
+          from qtpy.QtCore import QSettings
+          s = QSettings("napari", "napari")
+          s.setValue("MainWindow/geometry", v.window._qt_window.saveGeometry())
+          s.sync()
+          v.close()
+          EOF
       - name: Build workshop
         run: pixi run build
+        env:
+          # Keep napari's Qt settings in an isolated dir so we fully control the
+          # initial window geometry (seeded above) and avoid any runner-level cache.
+          XDG_CONFIG_HOME: /tmp/napari-ci-config
       - name: Upload artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:

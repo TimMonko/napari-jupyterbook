@@ -39,6 +39,7 @@ times so you can see the size reported for each step. It expects consistent 1018
 import napari
 import numpy as np
 from napari.utils import nbscreenshot
+from qtpy.QtCore import QSettings
 
 rng = np.random.default_rng(42)
 data = rng.integers(0, 255, (256, 256), dtype=np.uint8)
@@ -47,6 +48,9 @@ def report_size(viewer, label):
     win = viewer.window._qt_window
     size = win.size()
     print(f"[{label}] {size.width()} x {size.height()}")
+
+def clear_geometry():
+    QSettings("napari", "napari").remove("MainWindow/geometry")
 ```
 
 ## Fresh viewer
@@ -76,7 +80,7 @@ nbscreenshot(viewer)
 
 ```{code-cell} ipython3
 viewer.close()
+clear_geometry()
 ```
 
-If `floating=on` is working, all three size reports should be identical (1018×498 or similar
-consistent value) and all three screenshots should look the same size.
+If `floating=on` is working, all three size reports should be identical and all three screenshots should look the same size.

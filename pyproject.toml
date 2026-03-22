@@ -34,13 +34,18 @@ platforms = ["win-64", "linux-64", "osx-arm64", "osx-64"]
 default = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.tasks]
+# Seed napari's saved window geometry to 1280x720 before any notebook runs.
+# This is the closest equivalent to a Sphinx conf.py for controlling viewer size:
+# napari restores QSettings on startup, so seeding once here affects all notebooks
+# without any per-notebook code. Runs on both local and CI builds.
+# On Linux/CI, XDG_CONFIG_HOME should point to an isolated dir (set in pages.yml)
+# so this doesn't overwrite your personal napari config.
+seed-geometry = { cmd = "python scripts/seed_napari_geometry.py" }
 # Build the full site (executes notebooks — requires a display server on Linux)
-build = { cmd = "jupyter-book build --html --execute" }
-# Build with serial execution — one kernel at a time, safer on headless CI with a tiling WM
-build-serial = { cmd = "jupyter-book build --html --execute --execute-parallel 1" }
+build = { cmd = "jupyter-book build --html --execute", depends-on = ["seed-geometry"] }
+# Build with serial execution — one kernel at a time, useful for debugging
+build-serial = { cmd = "jupyter-book build --html --execute --execute-parallel 1", depends-on = ["seed-geometry"] }
 # Live-preview server for local development
-start = { cmd = "jupyter-book start" }
-# Live-preview with serial execution (safer on CI or when debugging screenshot issues)
-start-noparallel = { cmd = "jupyter-book start --execute --execute-parallel 1" }
+start = { cmd = "jupyter-book start", depends-on = ["seed-geometry"] }
 # Remove build artifacts
 clean = "jupyter-book clean ."

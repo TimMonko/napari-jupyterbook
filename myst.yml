@@ -1,0 +1,21 @@
+version: 1
+project:
+  title: napari test notebooks
+  authors:
+    - name: Tim Monko
+  github: TimMonko/napari-jupyterbook
+  toc:
+    - file: home.md
+      title: Home
+    - title: Notebooks
+      children:
+        - file: notebooks/01_napari_gui.md
+        - file: notebooks/02_intro_bioimage_viz.md
+        - file: notebooks/psobolewskiphd-interactive-analysis.md
+        - file: notebooks/psobolewskiphd-spot-detection.md
+        - file: notebooks/scipy-intro-bioimage-viz.md
+site:
+  options:
+    folders: true
+  template: book-theme
+  title: napari test

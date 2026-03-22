@@ -1,0 +1,68 @@
+# Workflow for building and deploying the napari workshops to GitHub Pages
+name: Build and Deploy Site
+
+on:
+  # Runs on pushes targeting the default branch
+  pull_request:
+  push:
+    branches: ["main"]
+  schedule:
+    # Every Tuesday at 12:00 UTC
+    - cron: '0 12 * * 2'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  # `BASE_URL` determines, relative to the root of the domain, the URL that your site is served from.
+  # Since your site lives at `https://{user/org}.github.io/workshops`, set `BASE_URL=/workshops`.
+  BASE_URL: /${{ github.event.repository.name }}
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Build job for PRs and main
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - name: Setup Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+      - name: Setup pixi
+        uses: prefix-dev/setup-pixi@a0af7a228712d6121d37aba47adf55c1332c9c2e # v0.9.4
+        with:
+          locked: false  # solve fresh each run
+      - name: Setup headless display
+        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        with:
+          qt: true
+          wm: herbstluftwm
+      - name: Build workshop
+        run: pixi run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: './_build/html'
+
+  # Deploy job - only runs on main and not on schedule
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'schedule'
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

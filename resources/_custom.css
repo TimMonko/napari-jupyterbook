@@ -1,0 +1,81 @@
+/* Custom overrides for the mystmd book-theme.
+ *
+ * This file is the source partial — it is merged with napari-sphinx-theme.css
+ * by `scripts/copy_theme_css.py` to produce `resources/napari-theme.css`.
+ *
+ * The napari brand variables defined by the upstream theme (prepended above):
+ *   --napari-primary-blue:  #80d1ff   navbar background (light)
+ *   --napari-deep-blue:     #009bf2   links, accents
+ *   --napari-light-blue:    #d2efff   subtle highlight tones
+ *   --napari-purple:        #564C69   navbar background (dark)
+ *   --napari-dark-gray:     #686868   muted text
+ *   --napari-gray:          #f7f7f7   background highlights
+ *
+ * Selector notes: the mystmd book-theme renders with Tailwind CSS utility
+ * classes.  Overriding them requires !important or higher specificity.
+ */
+
+/* ── Navbar / top sticky header ─────────────────────────────────────────────
+ * The sticky bar is a <div> with Tailwind classes including `sticky` and
+ * `shadow`.  In light mode apply the napari primary blue (matching the
+ * napari-sphinx-theme navbar); in dark mode use the napari purple.
+ */
+html:not(.dark) .sticky.shadow {
+  background-color: rgba(128, 209, 255, 0.85) !important; /* --napari-primary-blue @85% */
+  backdrop-filter: blur(10px);
+}
+
+html.dark .sticky.shadow {
+  background-color: rgba(86, 76, 105, 0.85) !important;  /* --napari-purple @85% */
+  backdrop-filter: blur(10px);
+}
+
+/* ── Links inside article body ───────────────────────────────────────────────
+ * Tailwind leaves content <a> elements with empty class attributes, so a
+ * plain element selector is fine here.  Skip helper/icon links that carry
+ * explicit Tailwind colour utilities.
+ */
+article.content a:not([class*="text-inherit"]):not([class*="no-underline"]):not([class*="text-gray"]):not([class*="text-stone"]) {
+  color: var(--napari-deep-blue, #009bf2);
+}
+
+/* ── Navigation active state ─────────────────────────────────────────────────
+ * Sidebar TOC active link uses Tailwind's `active` class.
+ */
+nav a.active,
+nav a[aria-current="page"] {
+  color: var(--napari-deep-blue, #009bf2) !important;
+}
+
+/* ── Next / previous page navigation arrows ──────────────────────────────────
+ * Bottom-of-page nav cards use Tailwind's `hover:border-blue-600` and
+ * `hover:text-blue-600`.  Override to napari deep blue.
+ */
+article a[class*="hover:border-blue"] {
+  --tw-hover-text-opacity: 1;
+}
+
+article a[class*="hover:border-blue"]:hover {
+  border-color: var(--napari-deep-blue, #009bf2) !important;
+  color: var(--napari-deep-blue, #009bf2) !important;
+}
+
+/* ── Monospace / code font ───────────────────────────────────────────────────
+ * JetBrains Mono matches the napari-sphinx-theme code style.
+ * Falls back to common system monospace fonts.
+ */
+code,
+pre,
+kbd,
+samp {
+  font-family:
+    'JetBrains Mono',
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace;
+}

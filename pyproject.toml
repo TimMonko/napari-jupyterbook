@@ -1,0 +1,42 @@
+[project]
+name = "napari-workshops"
+version = "0.1.0"
+description = "Hands-on napari training workshops"
+readme = "README.md"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+authors = [
+    { name = "napari team", email = "info@napari.org" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "napari[all]>=0.7.0rc0",  # if napari 0.6.6, then pin python to <3.14
+    "matplotlib",
+]
+
+[dependency-groups]
+dev = [
+    "jupyter-book>=2",
+    "jupyterlab",
+    "jupyterlab-myst",
+    "jupytext",
+    "napari-sphinx-theme",
+]
+
+[tool.uv]
+package = false
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-arm64", "osx-64"]
+
+[tool.pixi.environments]
+default = { features = ["dev"], solve-group = "default" }
+
+[tool.pixi.tasks]
+# Build the full site (executes notebooks — requires a display server on Linux)
+build = { cmd = "jupyter-book build --html --execute --strict" }
+# Live-preview server for local development
+start = {  cmd = "jupyter-book start" }
+# Remove build artifacts
+clean = "jupyter-book clean ."

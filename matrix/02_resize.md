@@ -19,6 +19,9 @@ the window to a known, full size, fixing the squished appearance.
 
 Two sizes are tested: `800×600` and `1280×960`.
 
+**Each section uses a distinct colormap** so you can confirm the screenshots are genuinely
+different viewer instances and not a cached/stale render.
+
 ```{code-cell} ipython3
 import napari
 import numpy as np
@@ -28,11 +31,11 @@ rng = np.random.default_rng(42)
 data = rng.integers(0, 255, (256, 256), dtype=np.uint8)
 ```
 
-## No resize (control)
+## No resize (control) — colormap: gray
 
 ```{code-cell} ipython3
 viewer = napari.Viewer()
-viewer.add_image(data, name='no-resize')
+viewer.add_image(data, name='no-resize', colormap='gray')
 nbscreenshot(viewer)
 ```
 
@@ -40,11 +43,11 @@ nbscreenshot(viewer)
 viewer.close()
 ```
 
-## resize(800, 600)
+## resize(800, 600) — colormap: green
 
 ```{code-cell} ipython3
 viewer = napari.Viewer()
-viewer.add_image(data, name='resize-800')
+viewer.add_image(data, name='resize-800', colormap='green')
 viewer.window._qt_window.resize(800, 600)
 nbscreenshot(viewer)
 ```
@@ -53,11 +56,11 @@ nbscreenshot(viewer)
 viewer.close()
 ```
 
-## resize(1280, 960)
+## resize(1280, 960) — colormap: red
 
 ```{code-cell} ipython3
 viewer = napari.Viewer()
-viewer.add_image(data, name='resize-1280')
+viewer.add_image(data, name='resize-1280', colormap='red')
 viewer.window._qt_window.resize(1280, 960)
 nbscreenshot(viewer)
 ```

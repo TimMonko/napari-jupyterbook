@@ -13,50 +13,70 @@ kernelspec:
 
 # Matrix 05: viewer.close() between screenshots
 
-**Hypothesis A:** Reusing a single viewer across multiple screenshots is fine.
+**CI findings so far:**
+- Screenshot 1 (fresh viewer) → correct ✓
+- Screenshot 2 (same viewer, `add_image` called) → **mis-sized** ✗
+- Screenshot 3 (close + fresh viewer) → correct ✓
 
-**Hypothesis B:** Accumulating open viewer state (GPU resources, Qt widgets) between screenshots
-causes degradation. Calling `viewer.close()` and creating a fresh `napari.Viewer()` for each
-screenshot session ensures a clean slate.
+**Hypothesis:** `add_image()` internally updates Qt widgets (adds a row to the layer list, repaints
+controls), which flushes queued WM resize events — shrinking the window before the screenshot.
+Adding a `sleep()` after `add_image` (but before the screenshot) may allow the window to stabilise
+but probably won't help because `sleep()` does not drain the Qt event queue — it just idles the
+kernel thread while the WM events are still queued.
 
-This notebook takes three screenshots:
-1. Fresh viewer → screenshot
-2. Same viewer → screenshot (reuse)
-3. Closed and fresh viewer → screenshot (reset)
-
-All three should look identical if reuse is safe.
+A more direct fix is `processEvents()` — but 03 showed that makes things **worse** (it flushes
+the WM shrink event). So sleep is the only candidate that idles without queue-flushing.
 
 ```{code-cell} ipython3
 import napari
 import numpy as np
 from napari.utils import nbscreenshot
+from time import sleep
 
 rng = np.random.default_rng(42)
 data = rng.integers(0, 255, (256, 256), dtype=np.uint8)
 ```
 
-## Screenshot 1 — fresh viewer
+## Screenshot 1 — fresh viewer (control, expected good)
 
 ```{code-cell} ipython3
 viewer = napari.Viewer()
-viewer.add_image(data, name='fresh-viewer')
+viewer.add_image(data, name='fresh-viewer', colormap='gray')
 nbscreenshot(viewer)
 ```
 
-## Screenshot 2 — same viewer, new layer added
+## Screenshot 2a — same viewer, add_image, NO sleep (expected bad — reproduced from first run)
 
 ```{code-cell} ipython3
-viewer.add_image(data * 0.5, name='second-layer')
+viewer.add_image(data[:128, :128], name='second-layer', colormap='green')
 nbscreenshot(viewer)
 ```
 
-## Screenshot 3 — close and reopen
+## Screenshot 2b — same viewer, add another layer, sleep(1) before screenshot
+
+```{code-cell} ipython3
+viewer.add_image(data[64:192, 64:192], name='third-layer', colormap='blue')
+sleep(1)
+nbscreenshot(viewer)
+```
+
+## Screenshot 2c — same viewer, add another layer, sleep(3) before screenshot
+
+```{code-cell} ipython3
+viewer.add_image(data[32:96, 32:96], name='fourth-layer', colormap='red')
+sleep(3)
+nbscreenshot(viewer)
+```
 
 ```{code-cell} ipython3
 viewer.close()
+```
 
+## Screenshot 3 — close and reopen (control, expected good)
+
+```{code-cell} ipython3
 viewer = napari.Viewer()
-viewer.add_image(data, name='after-close')
+viewer.add_image(data, name='after-close', colormap='magenta')
 nbscreenshot(viewer)
 ```
 

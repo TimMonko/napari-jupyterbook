@@ -26,6 +26,9 @@ project:
         - file: matrix/06_multiple_viewers.md
         - file: matrix/07_3d_mode.md
         - file: matrix/08_combined.md
+        - file: matrix/09_kernel_keepalive.md
+        - file: matrix/10_no_close.md
+        - file: matrix/11_size_diagnostic.md
 site:
   options:
     folders: true

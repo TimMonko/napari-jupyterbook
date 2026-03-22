@@ -48,7 +48,7 @@ jobs:
           qt: true
           wm: herbstluftwm
       - name: Build workshop
-        run: pixi run build
+        run: pixi run build-serial
       - name: Upload artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:

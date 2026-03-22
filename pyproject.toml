@@ -36,7 +36,9 @@ default = { features = ["dev"], solve-group = "default" }
 [tool.pixi.tasks]
 # Build the full site (executes notebooks — requires a display server on Linux)
 build = { cmd = "jupyter-book build --html --execute" }
+# Build with serial execution — one kernel at a time, safer on headless CI with a tiling WM
+build-serial = { cmd = "jupyter-book build --html --execute --execute-parallel 1" }
 # Live-preview server for local development
-start = {  cmd = "jupyter-book start" }
+start = { cmd = "jupyter-book start" }
 # Remove build artifacts
 clean = "jupyter-book clean ."

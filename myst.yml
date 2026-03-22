@@ -11,6 +11,7 @@ project:
       children:
         - file: notebooks/01_napari_gui.md
         - file: notebooks/02_intro_bioimage_viz.md
+        - file: notebooks/docs-viewer.md
         - file: notebooks/psobolewskiphd-interactive-analysis.md
         - file: notebooks/psobolewskiphd-spot-detection.md
         - file: notebooks/scipy-intro-bioimage-viz.md

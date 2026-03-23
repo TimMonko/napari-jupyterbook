@@ -53,11 +53,6 @@ jobs:
         run: herbstclient rule title=napari floating=on
       - name: Build workshop
         run: pixi run build
-        env:
-          # Isolate napari's QSettings from any runner-level config.
-          # The seed-geometry pixi task (which build depends-on) writes 1280x720
-          # here, and all notebooks launched by jupyter-book restore from here.
-          XDG_CONFIG_HOME: /tmp/napari-ci-config
       - name: Upload artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
